@@ -4,3 +4,7 @@ Husk at loki endpoint i Nlog.confi skal rettes til "loki:3100" fra "localhost:31
 
 Husk at mongodb skal rettes fra port "xx19 på localhost" til "xx17 på docker"
 
+Docker compose bash commands:
+docker-compose -f commons-docker-compose.yml up -d
+eller
+docker-compose -f services-docker-compose.yml up -d
