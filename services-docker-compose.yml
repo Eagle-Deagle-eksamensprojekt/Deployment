@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  item-service:
+    image: item-service:latest
+    container_name: item-service
+    build:
+      context: ./itemService
+    ports:
+      - "5001:80"
+    environment:
+      - MONGO_CONNECTION_STRING=mongodb://mongo:27017/itemdb
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - mongo
+      - rabbitmq
+    networks:
+      - app-network
+
+  user-service:
+    image: user-service:latest
+    container_name: user-service
+    build:
+      context: ./userService
+    ports:
+      - "5002:80"
+    environment:
+      - MONGO_CONNECTION_STRING=mongodb://mongo:27017/userdb
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  auction-service:
+    image: auction-service:latest
+    container_name: auction-service
+    build:
+      context: ./auctionService
+    ports:
+      - "5003:80"
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external:
+      name: commons-network
