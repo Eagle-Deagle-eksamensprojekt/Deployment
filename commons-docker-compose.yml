@@ -1,5 +1,3 @@
-version: "1.0.1"
-
 services:
   mongo:
     image: mongo:latest
@@ -9,11 +7,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      MONGO_INITDB_DATABASE: GrønOgOlsen
     volumes:
       - mongo_data:/data/db
     networks:
-      - commons
+      - gron-network
 
   rabbitmq:
     image: rabbitmq:management
@@ -25,7 +22,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     networks:
-      - commons
+      - gron-network
 
   loki:
     image: grafana/loki:latest
@@ -33,7 +30,7 @@ services:
     ports:
       - "3100:3100"
     networks:
-      - commons
+      - gron-network
 
   grafana:
     image: grafana/grafana:latest
@@ -46,10 +43,11 @@ services:
     depends_on:
       - loki
     networks:
-      - commons
+      - gron-network
 
   hashicorp_vault:
     image: hashicorp/vault:latest
+    container_name: vault
     restart: on-failure:10
     ports:
       - "8201:8201"
@@ -70,10 +68,14 @@ services:
     healthcheck:
       retries: 5
     command: 'server -dev -dev-root-token-id="00000000-0000-0000-0000-000000000000"'
+    networks:
+      - gron-network
 
 volumes:
   mongo_data:
   vault_data:
 
 networks:
-  commons:
+  gron-network:
+    name: gron-network
+

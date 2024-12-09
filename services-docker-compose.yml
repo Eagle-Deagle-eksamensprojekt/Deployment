@@ -1,51 +1,44 @@
-version: "1.0.1"
-
 services:
   item-service:
-    image: item-service:latest
-    container_name: item-service
-    build:
-      context: ./itemService
+    image: mikkelhv/4semitemservice:latest
+    container_name: itemService
     ports:
-      - "5001:80"
+      - "5001:8080"
     environment:
-      - MONGO_CONNECTION_STRING=mongodb://mongo:27017/itemdb
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    depends_on:
-      - mongo
-      - rabbitmq
+      - MongoConnectionString=${MongoConnectionString}
+      - DatabaseName=ItemDB
+      - CollectionName=items
+      - LOKI_URL=${LOKI_URL}
     networks:
-      - app-network
+      - gron-network
 
   user-service:
-    image: user-service:latest
-    container_name: user-service
-    build:
-      context: ./userService
+    image: mikkelhv/4semuserservice:latest
+    container_name: userService
     ports:
-      - "5002:80"
+      - "5002:8080"
     environment:
-      - MONGO_CONNECTION_STRING=mongodb://mongo:27017/userdb
-    depends_on:
-      - mongo
+      - MongoConnectionString=${MongoConnectionString}
+      - DatabaseName=UserDB
+      - CollectionName=users
+      - LOKI_URL=${LOKI_URL}
     networks:
-      - app-network
+      - gron-network
 
-  auction-service:
-    image: auction-service:latest
-    container_name: auction-service
-    build:
-      context: ./auctionService
+  auth-service:
+    image: mikkelhv/4semauthservice:latest
+    container_name: authService
     ports:
-      - "5003:80"
+      - "5003:8080"
     environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
-    depends_on:
-      - rabbitmq
+      - UserServiceEndpoint=${UserServiceEndpoint}
+      - VaultURL=${VaultURL}
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_DEV_ROOT_TOKEN_ID}
+      - LOKI_URL=${LOKI_URL}
     networks:
-      - app-network
+      - gron-network
 
 networks:
-  app-network:
-    external:
-      name: commons-network
+  gron-network:
+    name: gron-network
+
