@@ -19,7 +19,18 @@ GRAFANA_ADMIN_USER=admin
 GRAFANA_ADMIN_PASSWORD=admin
 VAULT_DEV_ROOT_TOKEN_ID='00000000-0000-0000-0000-000000000000'
 
+UserServiceEndpoint=http://userService:8080/api/user
+VaultURL=http://vault:8201
+MongoConnectionString=mongodb://admin:1234@mongo:27017/
 
+
+LOKI_URL=http://loki:3100
+
+
+
+
+
+Nedenfor er de variabler der skal sættes, disse er blevet sat manuelt i de enkelte services før
 Auth Service
 export issuer=http://localhost
 export secret=thisIsASecureSecretKeyThatIs32Chars!
