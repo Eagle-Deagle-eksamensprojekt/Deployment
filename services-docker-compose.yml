@@ -1,4 +1,14 @@
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - gron-network
+
   item-service:
     image: mikkelhv/4semitemservice:latest
     container_name: itemService
@@ -37,6 +47,34 @@ services:
       - LOKI_URL=${LOKI_URL}
     networks:
       - gron-network
+  
+#  bid-service:
+#    image: mikkelhv/4sembidservice:latest
+#    container_name: bidService
+#    ports:
+#      - "5004:8080"
+#    environment:
+#      - LOKI_URL=${LOKI_URL}
+#      - RABBITMQ_HOST=${RABBITMQ_HOST} #rabbitmq hvad skal url være?
+#    networks:
+#      - gron-network
+
+  auction-service:
+    image: mikkelhv/4semauctionservice:latest
+    container_name: auctionService
+    ports:
+      - "5005:8080"
+    environment:
+      - LOKI_URL=${LOKI_URL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - MongoConnectionString=${MongoConnectionString}
+      - DatabaseName=AuctionDB
+      - CollectionName=auctions
+      - ItemServiceEndpoint=${ItemServiceEndpoint}
+    networks:
+      - gron-network
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock  # Monter Docker-sockettet for at kunne lave nye containere
 
 networks:
   gron-network:
