@@ -49,17 +49,41 @@ services:
     networks:
       - gron-network
   
-  bid-service:
+  bid-service-1:
     image: mikkelhv/4sembidservice:latest
-    container_name: bidService
-    expose: 
-      - "8080"
+    container_name: bidService-1
     environment:
       - LOKI_URL=${LOKI_URL}
       - RABBITMQ_HOST=${RABBITMQ_HOST} 
       - TodaysAuctionsRabbitQueue=${TodaysAuctionsRabbitQueue}
     networks:
       - gron-network
+    ports:
+    - "5006:8080" # Dynamisk portbinding til debugging
+  
+  bid-service-2:
+    image: mikkelhv/4sembidservice:latest
+    container_name: bidService-2
+    environment:
+      - LOKI_URL=${LOKI_URL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST} 
+      - TodaysAuctionsRabbitQueue=${TodaysAuctionsRabbitQueue}
+    networks:
+      - gron-network
+    ports:
+    - "5007:8080" # Dynamisk portbinding til debugging
+  
+  bid-service-3:
+    image: mikkelhv/4sembidservice:latest
+    container_name: bidService-3
+    environment:
+      - LOKI_URL=${LOKI_URL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST} 
+      - TodaysAuctionsRabbitQueue=${TodaysAuctionsRabbitQueue}
+    networks:
+      - gron-network
+    ports:
+    - "5008:8080" # Dynamisk portbinding til debugging
 
   auction-service:
     image: mikkelhv/4semauctionservice:latest
@@ -84,4 +108,3 @@ services:
 networks:
   gron-network:
     name: gron-network
-
