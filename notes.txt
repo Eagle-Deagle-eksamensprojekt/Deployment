@@ -9,6 +9,10 @@ docker-compose -f commons-docker-compose.yml up -d
 eller
 docker-compose -f services-docker-compose.yml up -d
 
+Genindlæs NginX
+docker exec nginx nginx -s reload
+
+
 
 Dette skal kopieres ind i en ".env" fil (den skal ikke hedde andet end .env) denne fil bliver ignoreret af gitignore, og bliver derfor kun local
 MONGO_INITDB_ROOT_USERNAME=admin

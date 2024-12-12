@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./logs:/var/log/nginx # Map log-mappen til værtsmaskinen
     networks:
       - gron-network
 
@@ -48,16 +49,17 @@ services:
     networks:
       - gron-network
   
-#  bid-service:
-#    image: mikkelhv/4sembidservice:latest
-#    container_name: bidService
-#    ports:
-#      - "5004:8080"
-#    environment:
-#      - LOKI_URL=${LOKI_URL}
-#      - RABBITMQ_HOST=${RABBITMQ_HOST} #rabbitmq hvad skal url være?
-#    networks:
-#      - gron-network
+  bid-service:
+    image: mikkelhv/4sembidservice:latest
+    container_name: bidService
+    expose: 
+      - "8080"
+    environment:
+      - LOKI_URL=${LOKI_URL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST} 
+      - TodaysAuctionsRabbitQueue=${TodaysAuctionsRabbitQueue}
+    networks:
+      - gron-network
 
   auction-service:
     image: mikkelhv/4semauctionservice:latest
@@ -71,6 +73,7 @@ services:
       - DatabaseName=AuctionDB
       - CollectionName=auctions
       - ItemServiceEndpoint=${ItemServiceEndpoint}
+      - AuctionServiceEndpoint=${AuctionServiceEndpoint}
     networks:
       - gron-network
     volumes:
