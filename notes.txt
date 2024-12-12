@@ -23,16 +23,21 @@ GRAFANA_ADMIN_USER=admin
 GRAFANA_ADMIN_PASSWORD=admin
 VAULT_DEV_ROOT_TOKEN_ID='00000000-0000-0000-0000-000000000000'
 
-UserServiceEndpoint=http://userService:8080/api/user
-ItemServiceEndpoint=http://itemService:8080/item
-AuctionServiceEndpoint=http://auctionService:8080/auction
-
+UserServiceEndpoint=http://userService:8080/user
 VaultURL=http://vault:8201
 MongoConnectionString=mongodb://admin:1234@mongo:27017/
 
+
 LOKI_URL=http://loki:3100
 
+
 RABBITMQ_HOST=rabbitmq
+TodaysAuctionsRabbitQueue=TodaysAuctions
+
+ItemServiceEndpoint=http://itemService:8080/item
+AuctionServiceEndpoint=http://auctionService:8080/auction 
+
+
 
 
 
