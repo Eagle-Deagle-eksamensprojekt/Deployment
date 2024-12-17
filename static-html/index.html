@@ -99,7 +99,7 @@
             const method = form.querySelector("textarea") ? "POST" : "GET";
             const body = form.querySelector("textarea")?.value;
 
-            const response = await fetch(`http://52.156.215.202:4000/${endpoint}`, {
+            const response = await fetch(`http://52.156.215.202:4000${endpoint}`, {
                 method,
                 headers: {
                     "Content-Type": "application/json"
