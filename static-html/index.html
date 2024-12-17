@@ -154,8 +154,8 @@
                 const result = await response.json();
     
                 // Vis resultatet i #response-container
-                const responseContainer = document.getElementById("response-container") + {endpoint};
-                const responseContent = document.getElementById("response-content") + {endpoint};
+                const responseContainer = document.getElementById("response-container");
+                const responseContent = document.getElementById("response-content");
     
                 responseContent.textContent = JSON.stringify(result, null, 2); // Formater JSON med 2 mellemrum
                 responseContainer.style.display = "block"; // Sørg for at det vises
