@@ -36,7 +36,18 @@
     <div class="endpoint">
         <h2>Create User</h2>
         <form onsubmit="testEndpoint(event, '/user')">
-            <textarea></textarea>
+            <textarea name="body">
+                {
+                    "address": "Kjærslund",
+                    "email": "test1@example.org",
+                    "firstname": "Mikkel",
+                    "isAdmin": true,
+                    "lastname": "Hansen",
+                    "password": "5",
+                    "phoneNumber": "88888888",
+                    "salt": ""
+            }
+            </textarea>
             <button type="submit">Test Endpoint</button>
         </form>
     </div>
@@ -45,15 +56,15 @@
         <h2>Create Item</h2>
         <form onsubmit="testEndpoint(event, '/item')">
             <textarea name="body">{
-    "description": "Stol fra Albanien",
-    "endAuctionDateTime": "2024-12-13T12:14:31.804+00:00",
-    "itemId": "Item_2",
-    "ownerId": "67572606df598934035057ef",
-    "startAuctionDateTime": "2024-12-09T18:14:31.804+00:00",
-    "startPrice": 70,
-    "title": "Albania Stol",
-    "vurdertPrice": 700
-}</textarea><br>
+                "description": "Stol fra Albanien",
+                "endAuctionDateTime": "2024-12-13T12:14:31.804+00:00",
+                "itemId": "Item_2",
+                "ownerId": "67572606df598934035057ef",
+                "startAuctionDateTime": "2024-12-09T18:14:31.804+00:00",
+                "startPrice": 70,
+                "title": "Albania Stol",
+                "vurdertPrice": 700
+            }</textarea><br>
             <button type="submit">Test Endpoint</button>
         </form>
     </div>
