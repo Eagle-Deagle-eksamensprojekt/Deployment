@@ -7,6 +7,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx # Map log-mappen til værtsmaskinen
+      - ./static-html:/static-html  # Map statisk HTML-mappe
     networks:
       - gron-network
 
