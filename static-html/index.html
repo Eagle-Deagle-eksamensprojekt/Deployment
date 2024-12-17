@@ -15,6 +15,12 @@
 <body>
     <h1>API Test Interface</h1>
 
+    <h2>Her vil dine handlinger blive vist:</h2>
+    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
+        <h3>Response:</h3>
+        <pre id="response-content" style="white-space: pre-wrap;"></pre>
+    </div>
+
     <div class="endpoint">
         <h2>Login</h2>
         <form onsubmit="testEndpoint(event, '/auth/login')">
@@ -26,21 +32,13 @@
         </form>
     </div>
 
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
-    </div>
+    
 
     <div class="endpoint">
         <h2>Get All Users</h2>
         <form onsubmit="testEndpoint(event, '/user/all')">
             <button type="submit">Test Endpoint</button>
         </form>
-    </div>
-
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
     </div>
 
     <div class="endpoint">
@@ -62,11 +60,6 @@
         </form>
     </div>
 
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
-    </div>
-
     <div class="endpoint">
         <h2>Create Item</h2>
         <form onsubmit="testEndpoint(event, '/item')">
@@ -84,21 +77,11 @@
         </form>
     </div>
 
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
-    </div>
-
     <div class="endpoint">
-        <h2>Get All Items</h2>
+        <h2>Get every Item in Item Database</h2>
         <form onsubmit="testEndpoint(event, '/item/all')">
             <button type="submit">Test Endpoint</button>
         </form>
-    </div>
-
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
     </div>
 
     <div class="endpoint">
@@ -108,11 +91,6 @@
         </form>
     </div>
 
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
-    </div>
-
     <div class="endpoint">
         <h2>Fetch and Save Auctionable Items</h2>
         <form onsubmit="testEndpoint(event, '/auction/fetch-and-save-auctionable')">
@@ -120,10 +98,16 @@
         </form>
     </div>
 
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
+    <div class="endpoint">
+        <h2>Get Price {ItemId}</h2>
+        <form onsubmit="testEndpoint(event, '/auction/price')">
+            <textarea name="body">{
+                "ItemId": "6756c885725834c03d2e1bde"
+            }</textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
     </div>
+
 
     <div class="endpoint">
         <h2>Start Listener</h2>
@@ -133,10 +117,6 @@
         </form>
     </div>
 
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
-    </div>
 
     <div class="endpoint">
         <h2>Place Bid</h2>
@@ -150,17 +130,13 @@
             <button type="submit">Test Endpoint</button>
         </form>
     </div>
-
-    <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
-        <h3>Response:</h3>
-        <pre id="response-content" style="white-space: pre-wrap;"></pre>
-    </div>
     
 
     <script>
         async function testEndpoint(event, endpoint) {
             event.preventDefault();
             const form = event.target;
+            const button = form.querySelector("button"); // Find knappen
             const method = form.querySelector("textarea") ? "POST" : "GET";
             const body = form.querySelector("textarea")?.value;
     
@@ -176,11 +152,14 @@
                 const result = await response.json();
     
                 // Vis resultatet i #response-container
-                const responseContainer = document.getElementById("response-container");
-                const responseContent = document.getElementById("response-content");
+                const responseContainer = document.getElementById("response-container") + {endpoint};
+                const responseContent = document.getElementById("response-content") + {endpoint};
     
                 responseContent.textContent = JSON.stringify(result, null, 2); // Formater JSON med 2 mellemrum
                 responseContainer.style.display = "block"; // Sørg for at det vises
+
+                // Ændr knappen til "klik"-stil
+                button.classList.add("clicked");
             } catch (error) {
                 // Håndter fejl og vis en besked
                 alert(`Error: ${error.message}`);
@@ -203,7 +182,25 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+        /* Standard knapstil */
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* Stil for en klikket knap */
+        button.clicked {
+            background-color: #28a745;
+            color: white;
+        }
     </style>
+
 
 </body>
 </html>
