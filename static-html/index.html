@@ -25,11 +25,12 @@
 
     <div class="endpoint">
         <h2>Login</h2>
+        <p>Indtast Email og Password, erstat placeholders med korrekte værdier</p>
         <form onsubmit="testEndpoint(event, '/auth/login')">
             <textarea name="body">
 {
     "userEmail": "test1@example.org",
-    "password": "5"
+    "password": "password"
 }
             </textarea><br>
             <button type="submit">Test Endpoint</button>
@@ -119,35 +120,42 @@
     
 
     <script>
+        let jwtToken = ""; // Global variabel til at gemme JWT-token
+
         async function testEndpoint(event, endpoint) {
             event.preventDefault();
             const form = event.target;
-            const button = form.querySelector("button"); // Find knappen
+            const button = form.querySelector("button"); 
             const method = form.querySelector("textarea") ? "POST" : "GET";
             const body = form.querySelector("textarea")?.value;
-    
+
             try {
                 const response = await fetch(`http://52.156.215.202:4000${endpoint}`, {
                     method,
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization": jwtToken ? `Bearer ${jwtToken}` : ""
                     },
                     body: body || undefined
                 });
-    
+
                 const result = await response.json();
-    
+
+                if (endpoint === '/auth/login' && result.token) {
+                    jwtToken = result.token; // Gem JWT-token ved login
+                    alert("Login successful. Token saved.");
+                }
+
                 // Vis resultatet i #response-container
                 const responseContainer = document.getElementById("response-container");
                 const responseContent = document.getElementById("response-content");
-    
-                responseContent.textContent = JSON.stringify(result, null, 2); // Formater JSON med 2 mellemrum
-                responseContainer.style.display = "block"; // Sørg for at det vises
+
+                responseContent.textContent = JSON.stringify(result, null, 2);
+                responseContainer.style.display = "block";
 
                 // Ændr knappen til "klik"-stil
                 button.classList.add("clicked");
             } catch (error) {
-                // Håndter fejl og vis en besked
                 alert(`Error: ${error.message}`);
             }
         }
