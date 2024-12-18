@@ -130,12 +130,19 @@
             const body = form.querySelector("textarea")?.value;
     
             try {
+                // Byg headers
+                const headers = {
+                    "Content-Type": "application/json"
+                };
+    
+                // Tilføj kun Authorization-header, hvis endpoint ikke er /auth/login
+                if (endpoint !== '/auth/login' && jwtToken) {
+                    headers["Authorization"] = `Bearer ${jwtToken}`;
+                }
+    
                 const response = await fetch(`http://52.156.215.202:4000${endpoint}`, {
                     method,
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": jwtToken ? `Bearer ${jwtToken}` : ""
-                    },
+                    headers,
                     body: body || undefined
                 });
     
@@ -148,6 +155,7 @@
     
                 const result = await response.json();
     
+                // Hvis det er /auth/login, gem JWT-token
                 if (endpoint === '/auth/login' && result.token) {
                     jwtToken = result.token; // Gem JWT-token ved login
                     alert("Login successful. Token saved.");
@@ -168,6 +176,7 @@
             }
         }
     </script>
+    
     
 
     <style>
