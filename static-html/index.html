@@ -121,14 +121,14 @@
 
     <script>
         let jwtToken = ""; // Global variabel til at gemme JWT-token
-
+    
         async function testEndpoint(event, endpoint) {
             event.preventDefault();
             const form = event.target;
             const button = form.querySelector("button"); 
             const method = form.querySelector("textarea") ? "POST" : "GET";
             const body = form.querySelector("textarea")?.value;
-
+    
             try {
                 const response = await fetch(`http://52.156.215.202:4000${endpoint}`, {
                     method,
@@ -138,28 +138,37 @@
                     },
                     body: body || undefined
                 });
-
+    
+                if (!response.ok) {
+                    // Hvis svaret ikke er ok, vis en detaljeret fejlbesked
+                    const errorText = await response.text(); // Forsøg at hente fejlindhold
+                    alert(`Error: ${response.status} - ${response.statusText}\nDetails: ${errorText}`);
+                    return;
+                }
+    
                 const result = await response.json();
-
+    
                 if (endpoint === '/auth/login' && result.token) {
                     jwtToken = result.token; // Gem JWT-token ved login
                     alert("Login successful. Token saved.");
                 }
-
+    
                 // Vis resultatet i #response-container
                 const responseContainer = document.getElementById("response-container");
                 const responseContent = document.getElementById("response-content");
-
+    
                 responseContent.textContent = JSON.stringify(result, null, 2);
                 responseContainer.style.display = "block";
-
+    
                 // Ændr knappen til "klik"-stil
                 button.classList.add("clicked");
             } catch (error) {
+                // Håndter netværksfejl eller uventede fejl
                 alert(`Error: ${error.message}`);
             }
         }
     </script>
+    
 
     <style>
         #response-container {
