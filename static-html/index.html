@@ -36,33 +36,10 @@
         </form>
     </div>
 
-    
-
-    <div class="endpoint">
-        <h2>Get All Users</h2>
-        <form onsubmit="testEndpoint(event, '/user/all')">
-            <button type="submit">Test Endpoint</button>
-        </form>
-    </div>
-
-    <div class="endpoint">
-        <h2>Create User</h2>
-        <form onsubmit="testEndpoint(event, '/user')">
-            <textarea name="body">
-{
-    "address": "Testvej 1",
-    "email": "test10@example.org",
-    "firstname": "TestNavn",
-    "isAdmin": true,
-    "lastname": "TestEfternavn",
-    "password": "test",
-    "phoneNumber": "88888888",
-    "salt": ""
-}
-            </textarea>
-            <button type="submit">Test Endpoint</button>
-        </form>
-    </div>
+    <!--
+    Div til authenticate token der blev genereret fra login ovenover.
+    Token skal gemmes i en javascript variabel og bruges i de efterfølgende requests.
+    -->
 
     <div class="endpoint">
         <h2>Create Item</h2>
@@ -80,28 +57,27 @@
     </div>
 
     <div class="endpoint">
-        <h2>Get every Item in Item Database</h2>
-        <form onsubmit="testEndpoint(event, '/item/all')">
+            <h2>Start todays Auction</h2>
+            <p>Henter de 3 ældste items fra ItemDb, gennem itemService</p>
+            <form onsubmit="testEndpoint(event, '/auction/fetch-and-save-auctionable')">
+                <button type="submit">Test Endpoint</button>
+            </form>
+    </div>
+
+    <div class="endpoint">
+        <h2>Initialser BidService (instans)</h2>
+        <p>Når denne bliver eksekveret, tager 1 bidService-instans 1 besked fra TodaysAuctionQueue</p>
+        <p>Og opretter kø for bid-ingress, og samtidig gemmer den ItemId så den kan publisere egen kø med bud videre til AuctionService</p>
+        <p>Kopier ItemId til feltet ved <strong>Placer Bud</strong></p>
+        <form onsubmit="testEndpoint(event, '/bid/start-listener')">
+            <textarea></textarea>
             <button type="submit">Test Endpoint</button>
         </form>
     </div>
 
     <div class="endpoint">
-        <h2>Get All Auctions</h2>
-        <form onsubmit="testEndpoint(event, '/auction/all')">
-            <button type="submit">Test Endpoint</button>
-        </form>
-    </div>
-
-    <div class="endpoint">
-        <h2>Fetch and Save Auctionable Items</h2>
-        <form onsubmit="testEndpoint(event, '/auction/fetch-and-save-auctionable')">
-            <button type="submit">Test Endpoint</button>
-        </form>
-    </div>
-
-    <div class="endpoint">
-        <h2>Get Price {ItemId}</h2>
+        <h2>Hent pris på item {itemId}</h2>
+        <p>Søger i AuctionDb efter Auction via ItemId og henter currentPrice</p>
         <form onsubmit="testEndpoint(event, '/auction/price')">
             <textarea name="body">
 {
@@ -110,20 +86,11 @@
             </textarea><br>
             <button type="submit">Test Endpoint</button>
         </form>
-    </div>
-
-
-    <div class="endpoint">
-        <h2>Start Listener</h2>
-        <form onsubmit="testEndpoint(event, '/bid/start-listener')">
-            <textarea></textarea>
-            <button type="submit">Test Endpoint</button>
-        </form>
-    </div>
-
+    </div>    
 
     <div class="endpoint">
-        <h2>Place Bid</h2>
+        <h2>Placer Bud</h2>
+        <p>Placer et bud. Opdater ItemId med id'et givet fra <strong>Initialiser BidService(instans)</strong></p>
         <form onsubmit="testEndpoint(event, '/ingress')">
             <textarea name="body">
 {
@@ -131,6 +98,19 @@
     "BidTime": "2024-12-18T21:44:55.787Z",
     "ItemId": "6756c885725834c03d2e1bde",
     "UserId": "67572606df598934035057ef"
+}
+            </textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>
+
+    <div class="endpoint">
+        <h2>Hent Auction for at se om bud er placeret</h2>
+        <p>Henter hele Auction og det bud ovenover bliver gemt, hvis det er valid</p>
+        <form onsubmit="testEndpoint(event, '/auction/data')">
+            <textarea name="body">
+{
+    "itemId": "6756c885725834c03d2e1bde"
 }
             </textarea><br>
             <button type="submit">Test Endpoint</button>
