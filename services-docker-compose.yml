@@ -17,7 +17,6 @@ services:
     ports:
       - "5001:8080"
     environment:
-      - MongoConnectionString=${MongoConnectionString}
       - DatabaseName=ItemDB
       - CollectionName=items
       - LOKI_URL=${LOKI_URL}
@@ -31,7 +30,6 @@ services:
     ports:
       - "5002:8080"
     environment:
-      - MongoConnectionString=${MongoConnectionString}
       - DatabaseName=UserDB
       - CollectionName=users
       - LOKI_URL=${LOKI_URL}
@@ -75,7 +73,6 @@ services:
     environment:
       - LOKI_URL=${LOKI_URL}
       - RABBITMQ_HOST=${RABBITMQ_HOST}
-      - MongoConnectionString=${MongoConnectionString}
       - DatabaseName=AuctionDB
       - CollectionName=auctions
       - ItemServiceEndpoint=${ItemServiceEndpoint}
