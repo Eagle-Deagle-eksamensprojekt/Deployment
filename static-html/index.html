@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grøn og Olsen</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .endpoint { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        textarea { width: 100%; height: 80px; }
+        input, button { padding: 10px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Grøn og Olsen</h1>
+
+    <h2>Her vil dine handlinger blive vist:</h2>
+    <p>Alle retur værdier vil blive vist her i toppen</p>
+    <form>
+        <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
+            <h3>Response:</h3>
+            <pre id="response-content" style="white-space: pre-wrap;"></pre>
+        </div>
+    </form>
+
+    <div class="endpoint">
+        <h2>Login</h2>
+        <p>Indtast Email og Password, erstat placeholders med korrekte værdier</p>
+        <p>authService/auth/login</p>
+        <form onsubmit="testEndpoint(event, '/auth/login')">
+            <textarea name="body">
+{
+    "userEmail": "test1@example.org",
+    "password": "password"
+}
+            </textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>
+
+    <div class="endpoint">
+        <h2>Create Item</h2>
+        <p>itemService/item</p>
+        <form onsubmit="testEndpoint(event, '/item')">
+            <textarea name="body">
+{
+    "description": "string",
+    "ownerId": "67572606df598934035057ef",
+    "title": "string",
+    "vurderetPrice": 0
+}
+            </textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>
+
+    <div class="endpoint">
+            <h2>Start todays Auction</h2>
+            <p>Henter de 3 ældste items fra ItemDb, gennem itemService</p>
+            <p>auctionService/auction/fetch-and-save-auctionable</p>
+            <form onsubmit="testEndpoint(event, '/auction/fetch-and-save-auctionable')">
+                <button type="submit">Test Endpoint</button>
+            </form>
+    </div>
+
+    <div class="endpoint">
+        <h2>Initialser BidService (instans)</h2>
+        <p>Når denne bliver eksekveret, tager 1 bidService-instans 1 besked fra TodaysAuctionQueue</p>
+        <p>Og opretter kø for bid-ingress, og samtidig gemmer den ItemId så den kan publisere egen kø med bud videre til AuctionService</p>
+        <p>Kopier ItemId til feltet ved <strong>Placer Bud</strong></p>
+        <p>bidService/bid/start-listener</p>
+        <form onsubmit="testEndpoint(event, '/bid/start-listener')">
+            <textarea></textarea>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>
+
+    <div class="endpoint">
+        <h2>Hent pris på item {itemId}</h2>
+        <p>Søger i AuctionDb efter Auction via ItemId og henter currentPrice</p>
+        <p>auctionService/auction/price</p>
+        <form onsubmit="testEndpoint(event, '/auction/price')">
+            <textarea name="body">
+{
+    "itemId": "6756c885725834c03d2e1bde"
+}
+            </textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>    
+
+    <div class="endpoint">
+        <h2>Placer Bud</h2>
+        <p>Placer et bud. Opdater ItemId med id'et givet fra <strong>Initialiser BidService(instans)</strong></p>
+        <p>bidIngress/ingress</p>
+        <form onsubmit="testEndpoint(event, '/ingress')">
+            <textarea name="body">
+{
+    "Amount": 50,
+    "BidTime": "2024-12-18T21:44:55.787Z",
+    "ItemId": "6756c885725834c03d2e1bde",
+    "UserId": "67572606df598934035057ef"
+}
+            </textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>
+
+    <div class="endpoint">
+        <h2>Hent Auction for at se om bud er placeret</h2>
+        <p>Henter hele Auction og det bud ovenover bliver gemt, hvis det er valid</p>
+        <p>auctionService/auction/data</p>
+        <form onsubmit="testEndpoint(event, '/auction/data')">
+            <textarea name="body">
+{
+    "itemId": "6756c885725834c03d2e1bde"
+}
+            </textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>
+    
+
+    <script>
+        let jwtToken = ""; // Global variabel til at gemme JWT-token
+    
+        async function testEndpoint(event, endpoint) {
+            event.preventDefault();
+            const form = event.target;
+            const button = form.querySelector("button"); 
+            const method = form.querySelector("textarea") ? "POST" : "GET";
+            const body = form.querySelector("textarea")?.value;
+    
+            try {
+                // Byg headers
+                const headers = {
+                    "Content-Type": "application/json"
+                };
+    
+                // Tilføj kun Authorization-header, hvis endpoint ikke er /auth/login
+                if (endpoint !== '/auth/login' && jwtToken) {
+                    headers["Authorization"] = `Bearer ${jwtToken}`;
+                }
+    
+                const response = await fetch(`http://52.156.215.202:4000${endpoint}`, {
+                    method,
+                    headers,
+                    body: body || undefined
+                });
+    
+                if (!response.ok) {
+                    // Hvis svaret ikke er ok, vis en detaljeret fejlbesked
+                    const errorText = await response.text(); // Forsøg at hente fejlindhold
+                    alert(`Error: ${response.status} - ${response.statusText}\nDetails: ${errorText}`);
+                    return;
+                }
+    
+                const result = await response.json();
+    
+                // Hvis det er /auth/login, gem JWT-token
+                if (endpoint === '/auth/login' && result.token) {
+                    jwtToken = result.token; // Gem JWT-token ved login
+                    alert("Login successful. Token saved.");
+                }
+    
+                // Vis resultatet i #response-container
+                const responseContainer = document.getElementById("response-container");
+                const responseContent = document.getElementById("response-content");
+    
+                responseContent.textContent = JSON.stringify(result, null, 2);
+                responseContainer.style.display = "block";
+    
+                // Ændr knappen til "klik"-stil
+                button.classList.add("clicked");
+            } catch (error) {
+                // Håndter netværksfejl eller uventede fejl
+                alert(`Error: ${error.message}`);
+            }
+        }
+    </script>
+    
+    
+
+    <style>
+        #response-container {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            font-family: monospace;
+            display: none; /* Skjul som standard */
+        }
+        #response-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        /* Standard knapstil */
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* Stil for en klikket knap */
+        button.clicked {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+
+
+</body>
+</html>

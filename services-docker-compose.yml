@@ -1,14 +1,26 @@
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./logs:/var/log/nginx # Map log-mappen til værtsmaskinen
+      - ./static-html:/static-html  # Map statisk HTML-mappe
+    networks:
+      - gron-network
+
   item-service:
     image: mikkelhv/4semitemservice:latest
     container_name: itemService
     ports:
       - "5001:8080"
     environment:
-      - MongoConnectionString=${MongoConnectionString}
       - DatabaseName=ItemDB
       - CollectionName=items
       - LOKI_URL=${LOKI_URL}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     networks:
       - gron-network
 
@@ -18,10 +30,10 @@ services:
     ports:
       - "5002:8080"
     environment:
-      - MongoConnectionString=${MongoConnectionString}
       - DatabaseName=UserDB
       - CollectionName=users
       - LOKI_URL=${LOKI_URL}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     networks:
       - gron-network
 
@@ -35,10 +47,59 @@ services:
       - VaultURL=${VaultURL}
       - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_DEV_ROOT_TOKEN_ID}
       - LOKI_URL=${LOKI_URL}
+      - VAULT_TOKEN=${VAULT_TOKEN}
+    networks:
+      - gron-network
+  
+  bid-service:
+    image: mikkelhv/4sembidservice:latest
+    environment:
+      - LOKI_URL=${LOKI_URL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - TodaysAuctionsRabbitQueue=${TodaysAuctionsRabbitQueue}
+      - AuctionServiceEndpoint=${AuctionServiceEndpoint}
+      - VAULT_TOKEN=${VAULT_TOKEN}
+    networks:
+      - gron-network
+    expose:
+      - "8080"
+    # Ingen port mapping nødvendigt for bid-service, da Nginx håndterer trafikken
+  
+  auction-service:
+    image: mikkelhv/4semauctionservice:latest
+    container_name: auctionService
+    ports:
+      - "5005:8080"
+    environment:
+      - LOKI_URL=${LOKI_URL}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - DatabaseName=AuctionDB
+      - CollectionName=auctions
+      - ItemServiceEndpoint=${ItemServiceEndpoint}
+      - AuctionServiceEndpoint=${AuctionServiceEndpoint}
+      - TodaysAuctionsRabbitQueue=${TodaysAuctionsRabbitQueue}
+      - VAULT_TOKEN=${VAULT_TOKEN}
+    networks:
+      - gron-network
+    depends_on:
+      - nginx # Vi afhænger af at nginx er startet først
+  
+  bid-ingress-service:
+    image: mikkelhv/4sembidingress:latest
+    container_name: bid-ingress-service
+    ports:
+      - "5000:8080"
+    environment:
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - VAULT_TOKEN=${VAULT_TOKEN}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - gron-network
 
 networks:
   gron-network:
     name: gron-network
-
