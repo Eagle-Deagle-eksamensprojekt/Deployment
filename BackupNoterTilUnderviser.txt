@@ -1,0 +1,38 @@
+Her er en simpel backup af miljøvariabler og brugbare commandoer, hvis VM-miljøet skulle fejle.
+Så kan underviser bruge dette dokument til at indlæse miljøvariabler ved enten at køre systemet via "dotnet run" eller lokalt docker miljø.
+
+Husk at loki endpoint i Nlog.confi skal være = "loki:3100" hvis det er i docker miljø, ellers brug "localhost:3100"
+
+Husk at MongoConnectionString skal enten køre på port "xx17" i docker-miljø, ellers til port "xx19" local
+
+Docker compose bash commands:
+docker-compose -f commons-docker-compose.yml up -d
+eller
+docker-compose -f services-docker-compose.yml up -d
+docker-compose -f services-docker-compose.yml up --scale bid-service=3 -d
+
+
+Herunder er alle miljøvariabler for diverse, brug dem evt. i en .env fil ved docker-compose kørsel:
+
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=1234
+RABBITMQ_DEFAULT_USER=guest
+RABBITMQ_DEFAULT_PASS=guest
+GRAFANA_ADMIN_USER=admin
+GRAFANA_ADMIN_PASSWORD=admin
+VAULT_DEV_ROOT_TOKEN_ID='00000000-0000-0000-0000-000000000000'
+
+
+VaultURL=http://vault:8201
+MongoConnectionString=mongodb://admin:1234@mongo:27017/
+
+
+LOKI_URL=http://loki:3100
+
+
+RABBITMQ_HOST=rabbitmq
+TodaysAuctionsRabbitQueue=TodaysAuctions
+
+ItemServiceEndpoint=http://itemService:8080/item
+AuctionServiceEndpoint=http://auctionService:8080/auction 
+UserServiceEndpoint=http://userService:8080/user
