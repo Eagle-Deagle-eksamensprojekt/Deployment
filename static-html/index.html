@@ -16,6 +16,7 @@
     <h1>Grøn og Olsen</h1>
 
     <h2>Her vil dine handlinger blive vist:</h2>
+    <p>Alle retur værdier vil blive vist her i toppen</p>
     <form>
         <div id="response-container" style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; max-height: 300px; overflow-y: auto; background: #f9f9f9;">
             <h3>Response:</h3>
@@ -26,6 +27,7 @@
     <div class="endpoint">
         <h2>Login</h2>
         <p>Indtast Email og Password, erstat placeholders med korrekte værdier</p>
+        <p>authService/auth/login</p>
         <form onsubmit="testEndpoint(event, '/auth/login')">
             <textarea name="body">
 {
@@ -37,13 +39,9 @@
         </form>
     </div>
 
-    <!--
-    Div til authenticate token der blev genereret fra login ovenover.
-    Token skal gemmes i en javascript variabel og bruges i de efterfølgende requests.
-    -->
-
     <div class="endpoint">
         <h2>Create Item</h2>
+        <p>itemService/item</p>
         <form onsubmit="testEndpoint(event, '/item')">
             <textarea name="body">
 {
@@ -60,6 +58,7 @@
     <div class="endpoint">
             <h2>Start todays Auction</h2>
             <p>Henter de 3 ældste items fra ItemDb, gennem itemService</p>
+            <p>auctionService/auction/fetch-and-save-auctionable</p>
             <form onsubmit="testEndpoint(event, '/auction/fetch-and-save-auctionable')">
                 <button type="submit">Test Endpoint</button>
             </form>
@@ -70,6 +69,7 @@
         <p>Når denne bliver eksekveret, tager 1 bidService-instans 1 besked fra TodaysAuctionQueue</p>
         <p>Og opretter kø for bid-ingress, og samtidig gemmer den ItemId så den kan publisere egen kø med bud videre til AuctionService</p>
         <p>Kopier ItemId til feltet ved <strong>Placer Bud</strong></p>
+        <p>bidService/bid/start-listener</p>
         <form onsubmit="testEndpoint(event, '/bid/start-listener')">
             <textarea></textarea>
             <button type="submit">Test Endpoint</button>
@@ -79,6 +79,7 @@
     <div class="endpoint">
         <h2>Hent pris på item {itemId}</h2>
         <p>Søger i AuctionDb efter Auction via ItemId og henter currentPrice</p>
+        <p>auctionService/auction/price</p>
         <form onsubmit="testEndpoint(event, '/auction/price')">
             <textarea name="body">
 {
@@ -92,6 +93,7 @@
     <div class="endpoint">
         <h2>Placer Bud</h2>
         <p>Placer et bud. Opdater ItemId med id'et givet fra <strong>Initialiser BidService(instans)</strong></p>
+        <p>bidIngress/ingress</p>
         <form onsubmit="testEndpoint(event, '/ingress')">
             <textarea name="body">
 {
@@ -108,6 +110,7 @@
     <div class="endpoint">
         <h2>Hent Auction for at se om bud er placeret</h2>
         <p>Henter hele Auction og det bud ovenover bliver gemt, hvis det er valid</p>
+        <p>auctionService/auction/data</p>
         <form onsubmit="testEndpoint(event, '/auction/data')">
             <textarea name="body">
 {
