@@ -77,6 +77,20 @@
     </div>
 
     <div class="endpoint">
+        <h2>Check om item er auctionable {itemId}</h2>
+        <p>Søger i AuctionDb efter Auction via ItemId og tjekker om item er Auctionable</p>
+        <p>auctionService/auction/price</p>
+        <form onsubmit="testEndpoint(event, '/bid/auctionable')">
+            <textarea name="body">
+{
+    "itemId": "6756c885725834c03d2e1bde"
+}
+            </textarea><br>
+            <button type="submit">Test Endpoint</button>
+        </form>
+    </div>
+
+    <div class="endpoint">
         <h2>Hent pris på item {itemId}</h2>
         <p>Søger i AuctionDb efter Auction via ItemId og henter currentPrice</p>
         <p>auctionService/auction/price</p>
